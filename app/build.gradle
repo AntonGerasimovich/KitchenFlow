@@ -55,10 +55,8 @@ dependencies {
     //Koin
     implementation "io.insert-koin:koin-android:$rootProject.koinVersion"
 
-    //Retrofit
-    implementation "com.squareup.okhttp3:logging-interceptor:$rootProject.loggingInterceptorVersion"
-    implementation "com.squareup.retrofit2:converter-moshi:$rootProject.converterMoshiVersion"
-    implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofitVersion"
+    //Moshi
+    implementation "com.squareup.moshi:moshi-kotlin:$rootProject.converterMoshiVersion"
 
     //Testing
     implementation "junit:junit:$rootProject.junitVersion"
