@@ -3,7 +3,14 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/Anton/Projects/KitchenFlow/app/src/main/res/layout/main_fragment.xml" value="0.253125" />
+        <entry key="..\:/Users/Anton/Projects/KitchenFlow/app/src/main/res/drawable/ic_group.xml" value="0.5465" />
+        <entry key="..\:/Users/Anton/Projects/KitchenFlow/app/src/main/res/drawable/ic_group_1_.xml" value="0.5465" />
+        <entry key="..\:/Users/Anton/Projects/KitchenFlow/app/src/main/res/drawable/ic_group_2_.xml" value="0.5465" />
+        <entry key="..\:/Users/Anton/Projects/KitchenFlow/app/src/main/res/drawable/ic_group_3.xml" value="0.5465" />
+        <entry key="..\:/Users/Anton/Projects/KitchenFlow/app/src/main/res/drawable/ic_menu.xml" value="0.5465" />
+        <entry key="..\:/Users/Anton/Projects/KitchenFlow/app/src/main/res/drawable/spinner_menu.xml" value="0.5465" />
+        <entry key="..\:/Users/Anton/Projects/KitchenFlow/app/src/main/res/layout/item_order.xml" value="0.33" />
+        <entry key="..\:/Users/Anton/Projects/KitchenFlow/app/src/main/res/layout/main_fragment.xml" value="0.25" />
       </map>
     </option>
   </component>
