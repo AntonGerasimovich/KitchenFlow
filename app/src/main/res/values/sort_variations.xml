@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="sort_variations">
+        <item>Sort by Preparation Start Time</item>
+        <item>Sort by Pick up Time</item>
+    </string-array>
+</resources>
