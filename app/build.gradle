@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.kitchenflow"
-        minSdk 24
+        minSdk 26
         targetSdk 30
         versionCode 1
         versionName "1.0"
@@ -62,4 +62,8 @@ dependencies {
     implementation "junit:junit:$rootProject.junitVersion"
     androidTestImplementation "androidx.test.ext:junit:$rootProject.extJUnitVersion"
     androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.espressoVersion"
+
+    //RX
+    implementation "io.reactivex.rxjava3:rxandroid:$rootProject.rxVersion"
+    implementation "io.reactivex.rxjava3:rxjava:$rootProject.rxVersion"
 }

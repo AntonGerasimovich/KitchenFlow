@@ -33,6 +33,13 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initView()
+        viewModel.orders.observe(viewLifecycleOwner) {
+
+        }
+    }
+
+    private fun initView() {
         with(binding) {
             ArrayAdapter.createFromResource(
                 requireContext(),
@@ -48,7 +55,8 @@ class MainFragment : Fragment() {
                         position: Int,
                         id: Long
                     ) {
-                        val sortType = SortType.getSortTypeByString(parent?.getItemAtPosition(position) as String)
+                        val sortType =
+                            SortType.getSortTypeByString(parent?.getItemAtPosition(position) as String)
                     }
 
                     override fun onNothingSelected(parent: AdapterView<*>?) {
