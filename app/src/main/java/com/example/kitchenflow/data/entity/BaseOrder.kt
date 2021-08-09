@@ -1,35 +1,36 @@
 package com.example.kitchenflow.data.entity
 
-import com.squareup.moshi.Json
+import com.google.gson.annotations.SerializedName
 
-sealed class BaseOrder(open val orderId: String) {
-    data class TakeoutOrderForDate(
-        @field:Json(name = "shortId")
-        override val orderId: String,
-        @field:Json(name = "pickupTime")
-        val pickupTime: String,
-        @field:Json(name = "type")
-        val orderType: String,
-        @field:Json(name = "numberOfItems")
-        val numOfItems: Int,
-        @field:Json(name = "customers")
-        val customers: List<Customer>
-    ): BaseOrder(orderId) {
-        val name: String
-            get() = customers.first().name
-    }
-
-    data class PaymentOrder(
-        @field:Json(name = "shortId")
-        override val orderId: String,
-        @field:Json(name = "status")
-        val paymentStatus: String,
-    ): BaseOrder(orderId)
-
-    data class KitchenOrder(
-        @field:Json(name = "shortId")
-        override val orderId: String,
-        @field:Json(name = "status")
-        val orderStatus: String
-    ): BaseOrder(orderId)
+abstract class BaseOrder {
+    @SerializedName("orderId")
+    var orderId: String = ""
+    @SerializedName("shortId")
+    var shortId: String = ""
 }
+
+data class TakeoutOrderForDate(
+    @SerializedName("pickupTime")
+    val pickupTime: String,
+    @SerializedName("type")
+    val orderType: String,
+    @SerializedName("numberOfItems")
+    val numOfItems: Int,
+    @SerializedName("customers")
+    val customers: List<Customer>
+) : BaseOrder() {
+    val name: String
+        get() = customers.first().name
+    val isCA: Boolean
+        get() = customers.first().isCA
+}
+
+data class PaymentOrder(
+    @SerializedName("status")
+    val paymentStatus: String,
+) : BaseOrder()
+
+data class KitchenOrder(
+    @SerializedName("status")
+    val orderStatus: String
+) : BaseOrder()

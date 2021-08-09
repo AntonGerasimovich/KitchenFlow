@@ -8,6 +8,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.kitchenflow.R
 import com.example.kitchenflow.data.entity.SortType
 import com.example.kitchenflow.databinding.MainFragmentBinding
@@ -21,6 +22,7 @@ class MainFragment : Fragment() {
 
     private val viewModel: MainViewModel by inject()
     private lateinit var binding: MainFragmentBinding
+    private lateinit var adapter: OrdersAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -35,7 +37,9 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         initView()
         viewModel.orders.observe(viewLifecycleOwner) {
-
+            if (!it.isNullOrEmpty()) {
+                adapter.addAll(it)
+            }
         }
     }
 
@@ -63,6 +67,8 @@ class MainFragment : Fragment() {
                     }
                 }
             }
+            adapter = OrdersAdapter(requireContext())
+            ordersListRv.adapter = adapter
         }
     }
 }

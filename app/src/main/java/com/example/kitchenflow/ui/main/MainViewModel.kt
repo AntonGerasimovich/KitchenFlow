@@ -21,7 +21,7 @@ class MainViewModel(private val repository: KitchenRepository) : ViewModel() {
             .observeOn(Schedulers.io())
             .subscribeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                ordersData.value = it
+                ordersData.postValue(it)
             }
     }
 }

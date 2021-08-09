@@ -3,22 +3,25 @@ package com.example.kitchenflow.data.entity
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import java.time.LocalDate
+import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
 @Parcelize
 data class OrderModel(
     val orderId: String,
+    val shortId: String,
     val paymentStatus: PaymentStatus,
     val username: String,
     val numOfItems: Int,
     val pickupTime: String,
     val orderType: OrderType,
-    val orderStatus: OrderStatus
+    val orderStatus: OrderStatus,
+    val isCA: Boolean
 ) : Parcelable
 
-enum class PaymentStatus(val status: String) {
-    Pending("authorized"), Paid("captured")
+enum class PaymentStatus(val status: String, name: String) {
+    Pending("authorized", "Pending"), Paid("captured", "Paid")
 }
 
 fun String.getPaymentStatus(): PaymentStatus = when (this) {
@@ -65,9 +68,9 @@ fun String.getOrderStatus(): OrderStatus = when (this) {
 fun String.convertToNormalDate(): String {
     return if (this.isNotEmpty()) {
         val inputFormatter =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:SSS'Z'")
-        val outputFormatter = DateTimeFormatter.ofPattern("MMM d")
-        val date = LocalDate.parse(this, inputFormatter)
+            DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+        val outputFormatter = DateTimeFormatter.ofPattern("HH:mm")
+        val date = LocalDateTime.parse(this, inputFormatter)
         outputFormatter.format(date)
     } else ""
 }

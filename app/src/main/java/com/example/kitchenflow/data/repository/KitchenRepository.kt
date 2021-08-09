@@ -1,7 +1,8 @@
 package com.example.kitchenflow.data.repository
 
 import com.example.kitchenflow.data.entity.*
-import com.squareup.moshi.Moshi
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import io.reactivex.rxjava3.core.Observable
 
 class KitchenRepository {
@@ -17,29 +18,35 @@ class KitchenRepository {
     private var zipper: (String, String, String) -> List<OrderModel> =
         object : Function3<String, String, String, List<OrderModel>> {
             override fun invoke(p1: String, p2: String, p3: String): List<OrderModel> {
-                val moshi = Moshi.Builder().build()
-                val kitchenOrders: KitchenOrders? =
-                    moshi.adapter(KitchenOrders::class.java).fromJson(p1)
-                val paymentOrders: PaymentOrders? =
-                    moshi.adapter(PaymentOrders::class.java).fromJson(p2)
-                val takeoutOrders: TakeoutOrders? =
-                    moshi.adapter(TakeoutOrders::class.java).fromJson(p3)
-
+                val allOrders: List<BaseOrder> = convertFromJsonToOneList(p1, p2, p3)
                 val orders: MutableList<OrderModel> = mutableListOf()
-                val allOrders: List<BaseOrder> =
-                    kitchenOrders?.orders?.plus(paymentOrders?.orders)
-                        ?.plus(takeoutOrders?.orders) as List<BaseOrder>
                 groupAllOrders(allOrders, orders)
                 return orders
             }
         }
+
+    private fun convertFromJsonToOneList(
+        json1: String,
+        json2: String,
+        json3: String
+    ): List<BaseOrder> {
+        val gson = Gson()
+        val kitchenOrders: List<KitchenOrder> =
+            gson.fromJson(json1, object : TypeToken<List<KitchenOrder>>() {}.type)
+        val paymentOrders: List<PaymentOrder> =
+            gson.fromJson(json2, object : TypeToken<List<PaymentOrder>>() {}.type)
+        val takeoutOrders: List<TakeoutOrderForDate> =
+            gson.fromJson(json3, object : TypeToken<List<TakeoutOrderForDate>>() {}.type)
+        return kitchenOrders + paymentOrders + takeoutOrders
+    }
 
     private fun groupAllOrders(
         allOrders: List<BaseOrder>,
         orders: MutableList<OrderModel>
     ) {
         allOrders.groupBy { it.orderId }.forEach { entry ->
-            val orderId: String = entry.key
+            val orderId = entry.key
+            var shortId = ""
             //проставил рандомные дефолт значения
             var paymentStatus: PaymentStatus = PaymentStatus.Paid
             var username = ""
@@ -47,19 +54,23 @@ class KitchenRepository {
             var pickupTime = ""
             var orderType: OrderType = OrderType.Takeout
             val orderStatus: OrderStatus
+            var isCA = false
             val kitchenOrderStatuses = mutableListOf<OrderStatus>()
             entry.value.forEach { order ->
                 when (order) {
-                    is BaseOrder.PaymentOrder -> {
+                    is PaymentOrder -> {
+                        shortId = order.shortId
                         paymentStatus = order.paymentStatus.getPaymentStatus()
                     }
-                    is BaseOrder.TakeoutOrderForDate -> {
+                    is TakeoutOrderForDate -> {
+                        isCA = order.isCA
                         username = order.name
+                        shortId = order.shortId
                         numOfItems = order.numOfItems
                         orderType = order.orderType.getOrderType()
                         pickupTime = order.pickupTime.convertToNormalDate()
                     }
-                    is BaseOrder.KitchenOrder -> {
+                    is KitchenOrder -> {
                         kitchenOrderStatuses.add(order.orderStatus.getOrderStatus())
                     }
                 }
@@ -70,12 +81,14 @@ class KitchenRepository {
             orders.add(
                 OrderModel(
                     orderId,
+                    shortId,
                     paymentStatus,
                     username,
                     numOfItems,
                     pickupTime,
                     orderType,
-                    orderStatus
+                    orderStatus,
+                    isCA
                 )
             )
         }

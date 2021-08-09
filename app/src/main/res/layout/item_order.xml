@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
@@ -10,33 +11,40 @@
     </data>
 
     <androidx.cardview.widget.CardView
-        android:layout_width="350dp"
-        android:layout_height="180dp"
-        app:cardCornerRadius="5dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:background="@color/white"
         android:elevation="2dp"
-        android:background="@color/white">
+        app:cardCornerRadius="5dp">
 
         <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
 
             <View
-                android:layout_width="4dp"
-                android:layout_height="match_parent"
+                android:id="@+id/indicator"
+                android:layout_width="6dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_marginTop="-16dp"
+                android:layout_marginBottom="-16dp"
+                android:layout_alignTop="@id/menu"
+                android:layout_alignBottom="@id/io_pickup_time_tv"
                 android:background="@color/colorSecondaryRed" />
 
             <TextView
                 android:id="@+id/io_name_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/menu"
                 android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:text="Harriet F."
+                android:layout_marginTop="8dp"
                 android:textColor="@color/black"
                 android:textSize="18sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:text="Harriet F." />
 
             <TextView
                 android:id="@+id/io_payment_tv"
@@ -46,8 +54,8 @@
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:text="Payment: Done"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                tools:text="Payment: Done" />
 
             <TextView
                 android:id="@+id/io_order_tv"
@@ -57,8 +65,8 @@
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:text="Order #342452345"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                tools:text="Order #342452345" />
 
             <TextView
                 android:id="@+id/io_items_num_tv"
@@ -68,8 +76,8 @@
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:text="Number of Items: 10"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                tools:text="Number of Items: 10" />
 
             <TextView
                 android:id="@+id/io_pickup_time_tv"
@@ -80,15 +88,15 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="16dp"
-                android:text="Pick Up Time: 5:30pm"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                tools:text="Pick Up Time: 5:30pm" />
 
             <ImageView
                 android:id="@+id/label_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/io_name_tv"
-                android:layout_alignBottom="@+id/io_name_tv"
+                android:layout_alignTop="@id/menu"
+                android:layout_alignBottom="@id/menu"
                 android:layout_toStartOf="@+id/order_type_iv"
                 android:src="@drawable/ic_group_3" />
 
@@ -96,19 +104,32 @@
                 android:id="@+id/order_type_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/io_name_tv"
-                android:layout_alignBottom="@+id/io_name_tv"
+                android:layout_alignTop="@+id/menu"
+                android:layout_alignBottom="@id/menu"
                 android:layout_toStartOf="@id/menu"
                 android:src="@drawable/ic_group" />
 
-            <Spinner
+            <ImageView
                 android:id="@+id/menu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/io_name_tv"
-                android:layout_alignBottom="@+id/io_name_tv"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="16dp"
                 android:layout_alignParentEnd="true"
-                android:background="@drawable/spinner_menu" />
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/ic_menu" />
+
+            <TextView
+                android:id="@+id/order_type_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/menu"
+                android:layout_alignBottom="@id/menu"
+                android:layout_marginEnd="8dp"
+                android:layout_toStartOf="@id/label_iv"
+                android:gravity="center"
+                android:textAllCaps="true"
+                tools:text="TAKEOUT" />
 
         </RelativeLayout>
     </androidx.cardview.widget.CardView>

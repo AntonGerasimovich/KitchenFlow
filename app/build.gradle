@@ -57,6 +57,7 @@ dependencies {
 
     //Moshi
     implementation "com.squareup.moshi:moshi-kotlin:$rootProject.converterMoshiVersion"
+    implementation 'com.google.code.gson:gson:2.8.7'
 
     //Testing
     implementation "junit:junit:$rootProject.junitVersion"
