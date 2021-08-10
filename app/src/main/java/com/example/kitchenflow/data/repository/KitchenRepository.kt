@@ -56,6 +56,8 @@ class KitchenRepository {
             var orderType: OrderType = OrderType.Takeout
             val orderStatus: OrderStatus
             var isCA = false
+            var prepTime = 0
+            var scheduledFor = ""
             val kitchenOrderStatuses = mutableListOf<OrderStatus>()
             entry.forEach { order ->
                 when (order) {
@@ -64,6 +66,7 @@ class KitchenRepository {
                         paymentStatus = order.paymentStatus
                     }
                     is TakeoutOrderInfoForDateModel -> {
+                        scheduledFor = order.scheduledFor
                         isCA = order.isCA
                         username = order.name
                         shortId = order.shortId
@@ -72,6 +75,7 @@ class KitchenRepository {
                         pickupTime = order.pickupTime.convertToNormalDate()
                     }
                     is KitchenInfoModel -> {
+                        prepTime = order.preparationTimeSec
                         kitchenOrderStatuses.add(order.orderStatus)
                     }
                 }
@@ -89,7 +93,9 @@ class KitchenRepository {
                     pickupTime,
                     orderType,
                     orderStatus,
-                    isCA
+                    isCA,
+                    scheduledFor,
+                    prepTime
                 )
             )
         }

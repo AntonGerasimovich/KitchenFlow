@@ -9,9 +9,7 @@ import android.widget.PopupMenu
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kitchenflow.R
-import com.example.kitchenflow.data.entity.OrderModel
-import com.example.kitchenflow.data.entity.OrderStatus
-import com.example.kitchenflow.data.entity.OrderType
+import com.example.kitchenflow.data.entity.*
 import com.example.kitchenflow.databinding.ItemOrderBinding
 
 class OrdersAdapter(
@@ -20,17 +18,22 @@ class OrdersAdapter(
 ) :
     RecyclerView.Adapter<OrdersAdapter.OrdersViewHolder>() {
 
+    companion object {
+        private const val KITCHEN_PREP_MILLIS: Long = 15 * 1000 * 60
+        private const val MIN_DRIVE_TIME_MILLIS: Long = 30 * 1000 * 60
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrdersViewHolder {
         val binding = ItemOrderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return OrdersViewHolder(binding)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: OrdersViewHolder, position: Int) {
         with(holder.binding) {
             val order = orders[position]
             this.order = order
             setUpMenu(order)
-
             orderTypeIv.setImageDrawable(
                 AppCompatResources.getDrawable(
                     context,
@@ -41,7 +44,7 @@ class OrdersAdapter(
                     }
                 )
             )
-
+            setUpTimer(order)
             if (order.isCA) {
                 labelIv.visibility = View.VISIBLE
                 orderTypeTv.visibility = View.GONE
@@ -51,6 +54,34 @@ class OrdersAdapter(
                 orderTypeTv.text = order.orderType.name
             }
         }
+    }
+
+    private fun ItemOrderBinding.setUpTimer(order: OrderModel) {
+        val currentTime = System.currentTimeMillis()
+        var orderPrepTime =
+            order.scheduledFor.convertToMilliseconds() - order.preparationTimeSec * 1000 + KITCHEN_PREP_MILLIS
+        if (order.orderType == OrderType.Curbside || order.orderType == OrderType.Takeout) {
+            ioTimerTv.text = if (currentTime >= orderPrepTime) {
+                ioTimerTv.setTextColor(context.getColor(R.color.colorPrimaryRed))
+                order.timer = ((currentTime - orderPrepTime) / 1000 / 60).toInt()
+                "+${if (order.timer >= 99) 99 else order.timer}m"
+            } else {
+                "${((orderPrepTime - currentTime) / 1000 / 60).toInt()}m"
+            }
+        } else {
+            orderPrepTime -= MIN_DRIVE_TIME_MILLIS
+            ioTimerTv.text = if (currentTime >= orderPrepTime) {
+                ioTimerTv.setTextColor(context.getColor(R.color.colorPrimaryRed))
+                order.timer = ((currentTime - orderPrepTime) / 1000 / 60).toInt()
+                "+${if (order.timer >= 99) 99 else order.timer}m"
+            } else {
+                "${((orderPrepTime - currentTime) / 1000 / 60).toInt()}m"
+            }
+        }
+    }
+
+    fun sort(sortType: SortType) {
+
     }
 
     private fun ItemOrderBinding.setUpMenu(order: OrderModel) {

@@ -109,10 +109,21 @@
                 android:id="@+id/order_type_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignTop="@+id/io_timer_tv"
+                android:layout_alignBottom="@id/io_timer_tv"
+                android:layout_toStartOf="@id/io_timer_tv"
+                android:src="@drawable/ic_group" />
+
+            <TextView
+                android:id="@+id/io_timer_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_alignTop="@+id/menu"
                 android:layout_alignBottom="@id/menu"
+                android:gravity="center"
                 android:layout_toStartOf="@id/menu"
-                android:src="@drawable/ic_group" />
+                android:textSize="16sp"
+                tools:text="+33m" />
 
             <ImageView
                 android:id="@+id/menu"

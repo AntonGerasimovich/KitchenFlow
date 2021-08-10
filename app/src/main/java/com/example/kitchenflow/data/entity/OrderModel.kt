@@ -3,8 +3,11 @@ package com.example.kitchenflow.data.entity
 import android.os.Parcelable
 import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.time.format.DateTimeFormatter
+import java.util.*
 
 @Parcelize
 data class OrderModel(
@@ -16,7 +19,10 @@ data class OrderModel(
     val pickupTime: String,
     val orderType: OrderType,
     val orderStatus: OrderStatus,
-    val isCA: Boolean
+    val isCA: Boolean,
+    val scheduledFor: String,
+    val preparationTimeSec: Int,
+    var timer: Int = 0
 ) : Parcelable
 
 enum class PaymentStatus {
@@ -135,4 +141,10 @@ fun String.convertToNormalDate(): String {
         val date = LocalDateTime.parse(this, inputFormatter)
         outputFormatter.format(date)
     } else ""
+}
+
+fun String.convertToMilliseconds(): Long {
+    val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ENGLISH)
+    val localDate = LocalDateTime.parse(this, formatter)
+    return localDate.atOffset(ZoneOffset.UTC).toInstant().toEpochMilli()
 }
