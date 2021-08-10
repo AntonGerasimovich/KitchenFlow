@@ -4,4 +4,22 @@
     <string name="previous_orders">Previous orders</string>
     <string name="upcoming_orders">Upcoming Orders</string>
     <string name="current_orders">Current Orders</string>
+    <string name="payment">Payment: %s</string>
+    <string name="order">Order #%s</string>
+    <string name="num_of_items">Number of items: %s</string>
+    <string name="pickup_time">Pick up Time: %s</string>
+    <string name="re_order">RE-ORDER</string>
+    <string name="out_for_delivery">Out For Delivery</string>
+    <string name="ready_for_pickup">Ready For Pickup</string>
+    <string name="chat_with_consumer">Chat With Consumer</string>
+    <string name="chat_with_driver">Chat With Driver</string>
+    <string name="received">Received</string>
+    <string name="finished">Finished</string>
+    <string name="print_kitchen_order">Print Kitchen Order</string>
+    <string name="cancel_order">Cancel Order</string>
+    <string name="delivered">Delivered</string>
+    <string name="reprint_labels">Reprint labels</string>
+    <string name="picked_up">Picked Up</string>
+    <string name="sort_by_preparation_start">Sort by Preparation Start Time</string>
+    <string name="sort_by_pick_up_time">Sort by Pick up Time</string>
 </resources>

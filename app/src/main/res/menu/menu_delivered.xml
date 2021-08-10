@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:title="@string/out_for_delivery" />
+    <item android:title="@string/ready_for_pickup" />
+    <item android:title="@string/chat_with_consumer" />
+    <item android:title="@string/chat_with_driver" />
+</menu>

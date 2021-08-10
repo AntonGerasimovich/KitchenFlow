@@ -1,16 +1,15 @@
 package com.example.kitchenflow.data.entity
 
-enum class SortType(val sortString: String) {
-    // Хардкод конечно не очень, но пока оставим так
-    PREPARATION("Sort by Preparation Start Time"), PICKUP("Sort by Pick up Time");
+import android.content.res.Resources
+import com.example.kitchenflow.R
 
-    companion object {
-        fun getSortTypeByString(sortString: String): SortType {
-            return when (sortString) {
-                PREPARATION.sortString -> PREPARATION
-                PICKUP.sortString -> PICKUP
-                else -> PREPARATION
-            }
-        }
+enum class SortType {
+    PREPARATION, PICKUP;
+}
+
+fun Resources.getSortTypeString(sortType: SortType): String {
+    return when (sortType) {
+        SortType.PREPARATION -> getString(R.string.sort_by_preparation_start)
+        SortType.PICKUP -> getString(R.string.sort_by_pick_up_time)
     }
 }
