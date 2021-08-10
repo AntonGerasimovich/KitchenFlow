@@ -18,9 +18,9 @@ class KitchenRepository {
     private var zipper: (String, String, String) -> List<OrderModel> =
         object : Function3<String, String, String, List<OrderModel>> {
             override fun invoke(p1: String, p2: String, p3: String): List<OrderModel> {
-                val allOrders: List<BaseOrder> = convertFromJsonToOneList(p1, p2, p3)
+                val allOrderEntities: List<BaseOrderEntity> = convertFromJsonToOneList(p1, p2, p3)
                 val orders: MutableList<OrderModel> = mutableListOf()
-                groupAllOrders(allOrders, orders)
+                groupAllOrders(allOrderEntities, orders)
                 return orders
             }
         }
@@ -29,23 +29,24 @@ class KitchenRepository {
         json1: String,
         json2: String,
         json3: String
-    ): List<BaseOrder> {
+    ): List<BaseOrderEntity> {
         val gson = Gson()
-        val kitchenOrders: List<KitchenOrder> =
-            gson.fromJson(json1, object : TypeToken<List<KitchenOrder>>() {}.type)
-        val paymentOrders: List<PaymentOrder> =
-            gson.fromJson(json2, object : TypeToken<List<PaymentOrder>>() {}.type)
-        val takeoutOrders: List<TakeoutOrderForDate> =
-            gson.fromJson(json3, object : TypeToken<List<TakeoutOrderForDate>>() {}.type)
-        return kitchenOrders + paymentOrders + takeoutOrders
+        val kitchenInfoEntities: List<KitchenInfoEntity> =
+            gson.fromJson(json1, object : TypeToken<List<KitchenInfoEntity>>() {}.type)
+        val paymentInfoEntities: List<PaymentInfoEntity> =
+            gson.fromJson(json2, object : TypeToken<List<PaymentInfoEntity>>() {}.type)
+        val takeoutOrderInfos: List<TakeoutOrderInfoForDateEntity> =
+            gson.fromJson(json3, object : TypeToken<List<TakeoutOrderInfoForDateEntity>>() {}.type)
+        return kitchenInfoEntities + paymentInfoEntities + takeoutOrderInfos
     }
 
     private fun groupAllOrders(
-        allOrders: List<BaseOrder>,
+        allOrderEntities: List<BaseOrderEntity>,
         orders: MutableList<OrderModel>
     ) {
-        allOrders.groupBy { it.orderId }.forEach { entry ->
-            val orderId = entry.key
+        allOrderEntities.groupBy { it.orderId }.forEach {
+            val entry = it.value.map { entity -> entity.mapToModel() }
+            val orderId = it.key
             var shortId = ""
             //проставил рандомные дефолт значения
             var paymentStatus: PaymentStatus = PaymentStatus.Paid
@@ -56,26 +57,26 @@ class KitchenRepository {
             val orderStatus: OrderStatus
             var isCA = false
             val kitchenOrderStatuses = mutableListOf<OrderStatus>()
-            entry.value.forEach { order ->
+            entry.forEach { order ->
                 when (order) {
-                    is PaymentOrder -> {
+                    is PaymentInfoModel -> {
                         shortId = order.shortId
-                        paymentStatus = order.paymentStatus.getPaymentStatus()
+                        paymentStatus = order.paymentStatus
                     }
-                    is TakeoutOrderForDate -> {
+                    is TakeoutOrderInfoForDateModel -> {
                         isCA = order.isCA
                         username = order.name
                         shortId = order.shortId
                         numOfItems = order.numOfItems
-                        orderType = order.orderType.getOrderType()
+                        orderType = order.orderType
                         pickupTime = order.pickupTime.convertToNormalDate()
                     }
-                    is KitchenOrder -> {
-                        kitchenOrderStatuses.add(order.orderStatus.getOrderStatus())
+                    is KitchenInfoModel -> {
+                        kitchenOrderStatuses.add(order.orderStatus)
                     }
                 }
             }
-            val group = kitchenOrderStatuses.groupBy { it.status }
+            val group = kitchenOrderStatuses.groupBy {  }
             orderStatus =
                 if (group.keys.size == 1) kitchenOrderStatuses.first() else OrderStatus.InProgress
             orders.add(

@@ -20,4 +20,6 @@
     <string name="delivered">Delivered</string>
     <string name="reprint_labels">Reprint labels</string>
     <string name="picked_up">Picked Up</string>
+    <string name="sort_by_preparation_start">Sort by Preparation Start Time</string>
+    <string name="sort_by_pick_up_time">Sort by Pick up Time</string>
 </resources>

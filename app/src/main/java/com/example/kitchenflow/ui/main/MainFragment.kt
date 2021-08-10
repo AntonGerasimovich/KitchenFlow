@@ -59,8 +59,7 @@ class MainFragment : Fragment() {
                         position: Int,
                         id: Long
                     ) {
-                        val sortType =
-                            SortType.getSortTypeByString(parent?.getItemAtPosition(position) as String)
+
                     }
 
                     override fun onNothingSelected(parent: AdapterView<*>?) {

@@ -28,44 +28,8 @@ class OrdersAdapter(
     override fun onBindViewHolder(holder: OrdersViewHolder, position: Int) {
         with(holder.binding) {
             val order = orders[position]
-            ioNameTv.text = order.username
-            ioPaymentTv.text = context.getString(R.string.payment, order.paymentStatus.name)
-            ioOrderTv.text = context.getString(R.string.order, order.shortId)
-            ioItemsNumTv.text =
-                context.getString(R.string.num_of_items, order.numOfItems.toString())
-            ioPickupTimeTv.text = context.getString(R.string.pickup_time, order.pickupTime)
-            val pMenu: Int
-            when (order.orderStatus) {
-                OrderStatus.InProgress -> {
-                    pMenu = R.menu.menu_in_progress
-                    indicator.setBackgroundColor(context.getColor(R.color.colorGreen))
-                }
-                OrderStatus.ReadyForPickup -> {
-                    pMenu = R.menu.menu_ready_for_pickup
-                    indicator.setBackgroundColor(context.getColor(R.color.colorSkyBlue))
-                }
-                OrderStatus.OutForDelivery -> {
-                    pMenu = R.menu.menu_out_for_delivery
-                    indicator.setBackgroundColor(context.getColor(R.color.purple_200))
-                }
-                OrderStatus.Delivered -> {
-                    pMenu = R.menu.menu_delivered
-                    indicator.setBackgroundColor(context.getColor(R.color.colorLightGrey))
-                }
-                OrderStatus.Canceled -> {
-                    pMenu = R.menu.menu_canceled
-                    indicator.setBackgroundColor(context.getColor(R.color.colorSecondaryRed))
-                }
-                else -> {
-                    pMenu = R.menu.menu_canceled
-                    indicator.setBackgroundColor(context.getColor(R.color.colorSecondaryRed))
-                }
-            }
-            val popupMenu = PopupMenu(context, menu)
-            popupMenu.inflate(pMenu)
-            menu.setOnClickListener {
-                popupMenu.show()
-            }
+            this.order = order
+            setUpMenu(order)
 
             orderTypeIv.setImageDrawable(
                 AppCompatResources.getDrawable(
@@ -86,6 +50,41 @@ class OrdersAdapter(
                 orderTypeTv.visibility = View.VISIBLE
                 orderTypeTv.text = order.orderType.name
             }
+        }
+    }
+
+    private fun ItemOrderBinding.setUpMenu(order: OrderModel) {
+        val pMenu: Int
+        when (order.orderStatus) {
+            OrderStatus.InProgress -> {
+                pMenu = R.menu.menu_in_progress
+                indicator.setBackgroundColor(context.getColor(R.color.colorGreen))
+            }
+            OrderStatus.ReadyForPickup -> {
+                pMenu = R.menu.menu_ready_for_pickup
+                indicator.setBackgroundColor(context.getColor(R.color.colorSkyBlue))
+            }
+            OrderStatus.OutForDelivery -> {
+                pMenu = R.menu.menu_out_for_delivery
+                indicator.setBackgroundColor(context.getColor(R.color.purple_200))
+            }
+            OrderStatus.Delivered -> {
+                pMenu = R.menu.menu_delivered
+                indicator.setBackgroundColor(context.getColor(R.color.colorLightGrey))
+            }
+            OrderStatus.Canceled -> {
+                pMenu = R.menu.menu_canceled
+                indicator.setBackgroundColor(context.getColor(R.color.colorSecondaryRed))
+            }
+            else -> {
+                pMenu = R.menu.menu_canceled
+                indicator.setBackgroundColor(context.getColor(R.color.colorSecondaryRed))
+            }
+        }
+        val popupMenu = PopupMenu(context, menu)
+        popupMenu.inflate(pMenu)
+        menu.setOnClickListener {
+            popupMenu.show()
         }
     }
 

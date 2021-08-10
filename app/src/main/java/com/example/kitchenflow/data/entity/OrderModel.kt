@@ -1,11 +1,10 @@
 package com.example.kitchenflow.data.entity
 
 import android.os.Parcelable
+import com.google.gson.annotations.SerializedName
 import kotlinx.parcelize.Parcelize
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
 
 @Parcelize
 data class OrderModel(
@@ -20,49 +19,112 @@ data class OrderModel(
     val isCA: Boolean
 ) : Parcelable
 
-enum class PaymentStatus(val status: String, name: String) {
-    Pending("authorized", "Pending"), Paid("captured", "Paid")
+enum class PaymentStatus {
+    Pending, Paid
 }
 
-fun String.getPaymentStatus(): PaymentStatus = when (this) {
-    PaymentStatus.Pending.status -> PaymentStatus.Pending
-    PaymentStatus.Paid.status -> PaymentStatus.Paid
-    else -> PaymentStatus.Pending //по хорошему заменить бы на проброс исключения
+private const val AUTHORIZED_DTO = "authorized"
+private const val PAID_DTO = "captured"
+
+enum class PaymentStatusDTO(val value: String) {
+    @SerializedName(AUTHORIZED_DTO)
+    Pending(AUTHORIZED_DTO),
+
+    @SerializedName(PAID_DTO)
+    Paid(PAID_DTO);
+
+    fun mapToModel(): PaymentStatus = when (this) {
+        Pending -> PaymentStatus.Pending
+        Paid -> PaymentStatus.Paid
+    }
 }
 
-enum class OrderType(val type: String) {
-    Takeout("takeout"), Delivery("delivery"), Curbside("curbside")
+enum class OrderType {
+    Takeout, Delivery, Curbside
 }
 
-fun String.getOrderType(): OrderType = when (this) {
-    OrderType.Takeout.type -> OrderType.Takeout
-    OrderType.Delivery.type -> OrderType.Delivery
-    OrderType.Curbside.type -> OrderType.Curbside
-    else -> OrderType.Delivery
+private const val TAKEOUT_DTO = "takeout"
+private const val DELIVERY_DTO = "delivery"
+private const val CURBSIDE_DTO = "curbside"
+
+enum class OrderTypeDTO(val value: String) {
+    @SerializedName(TAKEOUT_DTO)
+    Takeout(TAKEOUT_DTO),
+
+    @SerializedName(DELIVERY_DTO)
+    Delivery(DELIVERY_DTO),
+
+    @SerializedName(CURBSIDE_DTO)
+    Curbside(CURBSIDE_DTO);
+
+    fun mapToModel(): OrderType = when (this) {
+        Takeout -> OrderType.Takeout
+        Delivery -> OrderType.Delivery
+        Curbside -> OrderType.Curbside
+    }
 }
 
-enum class OrderStatus(val status: String) {
-    Pending("pending"),
-    Fired("fired"),
-    ReadyForDelivery("ready_for_delivery"),
-    OutForDelivery("out_for_delivery"),
-    Delivered("delivered"),
-    Canceled("canceled"),
-    Deleted("deleted"),
-    ReadyForPickup("ready_for_pickup"),
-    InProgress("in_progress")
+private const val PENDING = "pending"
+private const val FIRED = "fired"
+private const val READY_FOR_DELIVERY = "ready_for_delivery"
+private const val OUT_FOR_DELIVERY = "out_for_delivery"
+private const val DELIVERED = "delivered"
+private const val CANCELED = "canceled"
+private const val DELETED = "deleted"
+private const val READY_FOR_PICKUP = "ready_for_pickup"
+private const val IN_PROGRESS = "in_progress"
+
+enum class OrderStatusDTO(val value: String) {
+    @SerializedName(PENDING)
+    Pending(PENDING),
+
+    @SerializedName(FIRED)
+    Fired(FIRED),
+
+    @SerializedName(READY_FOR_DELIVERY)
+    ReadyForDelivery(READY_FOR_DELIVERY),
+
+    @SerializedName(OUT_FOR_DELIVERY)
+    OutForDelivery(OUT_FOR_DELIVERY),
+
+    @SerializedName(DELIVERED)
+    Delivered(DELIVERED),
+
+    @SerializedName(CANCELED)
+    Canceled(CANCELED),
+
+    @SerializedName(DELETED)
+    Deleted(DELETED),
+
+    @SerializedName(READY_FOR_PICKUP)
+    ReadyForPickup(READY_FOR_PICKUP),
+
+    @SerializedName(IN_PROGRESS)
+    InProgress(IN_PROGRESS);
+
+    fun mapToModel(): OrderStatus = when (this) {
+        Pending -> OrderStatus.Pending
+        Fired -> OrderStatus.Fired
+        ReadyForDelivery -> OrderStatus.ReadyForDelivery
+        OutForDelivery -> OrderStatus.OutForDelivery
+        Delivered -> OrderStatus.Delivered
+        Canceled -> OrderStatus.Canceled
+        Deleted -> OrderStatus.Deleted
+        ReadyForPickup -> OrderStatus.ReadyForPickup
+        InProgress -> OrderStatus.InProgress
+    }
 }
 
-fun String.getOrderStatus(): OrderStatus = when (this) {
-    OrderStatus.Pending.status -> OrderStatus.Pending
-    OrderStatus.Fired.status -> OrderStatus.Fired
-    OrderStatus.ReadyForDelivery.status -> OrderStatus.ReadyForDelivery
-    OrderStatus.OutForDelivery.status -> OrderStatus.OutForDelivery
-    OrderStatus.Delivered.status -> OrderStatus.Delivered
-    OrderStatus.Canceled.status -> OrderStatus.Canceled
-    OrderStatus.Deleted.status -> OrderStatus.Deleted
-    OrderStatus.ReadyForPickup.status -> OrderStatus.ReadyForPickup
-    else -> OrderStatus.Canceled
+enum class OrderStatus {
+    Pending,
+    Fired,
+    ReadyForDelivery,
+    OutForDelivery,
+    Delivered,
+    Canceled,
+    Deleted,
+    ReadyForPickup,
+    InProgress
 }
 
 fun String.convertToNormalDate(): String {

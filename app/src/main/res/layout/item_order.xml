@@ -7,7 +7,7 @@
 
         <variable
             name="order"
-            type="com.example.kitchenflow.data.entity.Order" />
+            type="com.example.kitchenflow.data.entity.OrderModel" />
     </data>
 
     <androidx.cardview.widget.CardView
@@ -41,6 +41,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
+                android:text="@{order.username}"
                 android:textColor="@color/black"
                 android:textSize="18sp"
                 android:textStyle="bold"
@@ -54,6 +55,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
+                android:text="@{`Payment: ` + order.paymentStatus.name()}"
                 android:textSize="16sp"
                 tools:text="Payment: Done" />
 
@@ -65,6 +67,7 @@
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
+                android:text="@{`Order #` + order.shortId}"
                 android:textSize="16sp"
                 tools:text="Order #342452345" />
 
@@ -75,6 +78,7 @@
                 android:layout_below="@+id/io_order_tv"
                 android:layout_alignParentStart="true"
                 android:layout_marginStart="16dp"
+                android:text="@{`Number of Items: ` + order.numOfItems}"
                 android:layout_marginTop="8dp"
                 android:textSize="16sp"
                 tools:text="Number of Items: 10" />
@@ -88,6 +92,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="16dp"
+                android:text="@{`Pick Up Time: ` + order.pickupTime}"
                 android:textSize="16sp"
                 tools:text="Pick Up Time: 5:30pm" />
 
