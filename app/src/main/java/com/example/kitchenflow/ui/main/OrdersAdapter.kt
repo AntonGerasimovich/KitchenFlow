@@ -15,8 +15,7 @@ import com.example.kitchenflow.databinding.ItemOrderBinding
 class OrdersAdapter(
     private val context: Context,
     private var orders: List<OrderModel> = mutableListOf()
-) :
-    RecyclerView.Adapter<OrdersAdapter.OrdersViewHolder>() {
+) : RecyclerView.Adapter<OrdersAdapter.OrdersViewHolder>() {
 
     companion object {
         private const val KITCHEN_PREP_MILLIS: Long = 15 * 1000 * 60
@@ -80,8 +79,17 @@ class OrdersAdapter(
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun sort(sortType: SortType) {
-
+        orders = when (sortType) {
+            SortType.PREPARATION -> {
+                orders.sortedBy { it.preparationTimeSec }
+            }
+            SortType.PICKUP -> {
+                orders.sortedBy { it.scheduledFor.convertToMilliseconds() }
+            }
+        }
+        notifyDataSetChanged()
     }
 
     private fun ItemOrderBinding.setUpMenu(order: OrderModel) {
