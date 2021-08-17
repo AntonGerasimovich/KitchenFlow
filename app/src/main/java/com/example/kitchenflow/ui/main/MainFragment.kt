@@ -1,5 +1,6 @@
 package com.example.kitchenflow.ui.main
 
+import android.annotation.SuppressLint
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.text.Editable
@@ -48,6 +49,7 @@ class MainFragment : Fragment() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initView() {
         with(binding) {
             ArrayAdapter.createFromResource(
@@ -82,6 +84,7 @@ class MainFragment : Fragment() {
             ordersListRv.adapter = adapter
             dateTv.text =
                 SimpleDateFormat("EEE, MMMM dd", Locale.ENGLISH).format(Calendar.getInstance().time)
+            currentTv.text = "${currentTv.text} (${viewModel.orders.value?.size})"
             searchBarEt.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(
                     s: CharSequence?,
