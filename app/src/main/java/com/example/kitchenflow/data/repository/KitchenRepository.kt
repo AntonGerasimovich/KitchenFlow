@@ -94,7 +94,7 @@ class KitchenRepository {
                     orderType,
                     orderStatus,
                     isCA,
-                    scheduledFor,
+                    scheduledFor.convertToMilliseconds(),
                     prepTime
                 )
             )

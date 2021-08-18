@@ -82,9 +82,6 @@ class MainFragment : Fragment() {
             }
             adapter = OrdersAdapter(requireContext())
             ordersListRv.adapter = adapter
-            dateTv.text =
-                SimpleDateFormat("EEE, MMMM dd", Locale.ENGLISH).format(Calendar.getInstance().time)
-            currentTv.text = "${currentTv.text} (${viewModel.orders.value?.size})"
             searchBarEt.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(
                     s: CharSequence?,
@@ -97,8 +94,7 @@ class MainFragment : Fragment() {
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     val filter = s.toString()
                     if (filter.isNotEmpty()) {
-                        viewModel.orders.value?.filter { filter in it.username || filter in it.shortId }
-                            ?.let { adapter.addAll(it) }
+                        viewModel.sortItems(s.toString())?.let { adapter.addAll(it) }
                     } else viewModel.orders.value?.let { adapter.addAll(it) }
                 }
 

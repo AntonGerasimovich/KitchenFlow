@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.kitchenflow.R
 import com.example.kitchenflow.data.entity.*
 import com.example.kitchenflow.databinding.ItemOrderBinding
+import java.util.concurrent.TimeUnit
 
 class OrdersAdapter(
     private val context: Context,
@@ -58,25 +59,29 @@ class OrdersAdapter(
     private fun ItemOrderBinding.setUpTimer(order: OrderModel) {
         val currentTime = System.currentTimeMillis()
         var orderPrepTime =
-            order.scheduledFor.convertToMilliseconds() - order.preparationTimeSec * 1000 + KITCHEN_PREP_MILLIS
+            order.scheduledFor - TimeUnit.SECONDS.toMillis(order.preparationTimeSec.toLong()) + KITCHEN_PREP_MILLIS
         if (order.orderType == OrderType.Curbside || order.orderType == OrderType.Takeout) {
-            ioTimerTv.text = if (currentTime >= orderPrepTime) {
-                ioTimerTv.setTextColor(context.getColor(R.color.colorPrimaryRed))
-                order.timer = ((currentTime - orderPrepTime) / 1000 / 60).toInt()
-                "+${if (order.timer >= 99) 99 else order.timer}m"
-            } else {
-                "${((orderPrepTime - currentTime) / 1000 / 60).toInt()}m"
-            }
+            calculateTime(currentTime, orderPrepTime, order)
         } else {
             orderPrepTime -= MIN_DRIVE_TIME_MILLIS
-            ioTimerTv.text = if (currentTime >= orderPrepTime) {
+            calculateTime(currentTime, orderPrepTime, order)
+        }
+    }
+
+    private fun ItemOrderBinding.calculateTime(
+        currentTime: Long,
+        orderPrepTime: Long,
+        order: OrderModel
+    ) {
+        ioTimerTv.text = context.getString(
+            R.string.time_minutes, if (currentTime >= orderPrepTime) {
                 ioTimerTv.setTextColor(context.getColor(R.color.colorPrimaryRed))
                 order.timer = ((currentTime - orderPrepTime) / 1000 / 60).toInt()
                 "+${if (order.timer >= 99) 99 else order.timer}m"
             } else {
-                "${((orderPrepTime - currentTime) / 1000 / 60).toInt()}m"
+                TimeUnit.MILLISECONDS.toMinutes(orderPrepTime - currentTime).toString()
             }
-        }
+        )
     }
 
     @SuppressLint("NotifyDataSetChanged")
@@ -86,7 +91,7 @@ class OrdersAdapter(
                 orders.sortedBy { it.preparationTimeSec }
             }
             SortType.PICKUP -> {
-                orders.sortedBy { it.scheduledFor.convertToMilliseconds() }
+                orders.sortedBy { it.scheduledFor }
             }
         }
         notifyDataSetChanged()

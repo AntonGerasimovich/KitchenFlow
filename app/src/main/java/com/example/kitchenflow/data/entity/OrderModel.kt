@@ -20,7 +20,7 @@ data class OrderModel(
     val orderType: OrderType,
     val orderStatus: OrderStatus,
     val isCA: Boolean,
-    val scheduledFor: String,
+    val scheduledFor: Long,
     val preparationTimeSec: Int,
     var timer: Int = 0
 ) : Parcelable
