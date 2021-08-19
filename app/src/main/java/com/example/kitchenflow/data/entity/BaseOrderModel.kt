@@ -9,7 +9,8 @@ data class TakeoutOrderInfoForDateModel(
     val pickupTime: String,
     val orderType: OrderType,
     val numOfItems: Int,
-    val customers: List<Customer>
+    val customers: List<Customer>,
+    val scheduledFor: String
 ) : BaseOrderModel() {
     val name: String
         get() = customers.first().name
@@ -22,5 +23,6 @@ data class PaymentInfoModel(
 ) : BaseOrderModel()
 
 data class KitchenInfoModel(
-    val orderStatus: OrderStatus
+    val orderStatus: OrderStatus,
+    val preparationTimeSec: Int
 ) : BaseOrderModel()

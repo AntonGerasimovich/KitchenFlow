@@ -1,6 +1,10 @@
 package com.example.kitchenflow.ui.main
 
+import android.annotation.SuppressLint
+import android.icu.util.Calendar
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,11 +12,13 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
 import com.example.kitchenflow.R
 import com.example.kitchenflow.data.entity.SortType
+import com.example.kitchenflow.data.entity.getSortTypeString
 import com.example.kitchenflow.databinding.MainFragmentBinding
 import org.koin.android.ext.android.inject
+import java.text.SimpleDateFormat
+import java.util.*
 
 class MainFragment : Fragment() {
 
@@ -43,6 +49,7 @@ class MainFragment : Fragment() {
         }
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initView() {
         with(binding) {
             ArrayAdapter.createFromResource(
@@ -59,7 +66,14 @@ class MainFragment : Fragment() {
                         position: Int,
                         id: Long
                     ) {
-
+                        when (parent?.getItemAtPosition(position) as String) {
+                            resources.getSortTypeString(SortType.PICKUP) -> {
+                                this@MainFragment.adapter.sort(SortType.PICKUP)
+                            }
+                            resources.getSortTypeString(SortType.PREPARATION) -> {
+                                this@MainFragment.adapter.sort(SortType.PREPARATION)
+                            }
+                        }
                     }
 
                     override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -68,6 +82,24 @@ class MainFragment : Fragment() {
             }
             adapter = OrdersAdapter(requireContext())
             ordersListRv.adapter = adapter
+            searchBarEt.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    val filter = s.toString()
+                    if (filter.isNotEmpty()) {
+                        viewModel.sortItems(s.toString())?.let { adapter.addAll(it) }
+                    } else viewModel.orders.value?.let { adapter.addAll(it) }
+                }
+
+                override fun afterTextChanged(s: Editable?) {}
+            })
         }
     }
 }

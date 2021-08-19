@@ -20,7 +20,9 @@ data class TakeoutOrderInfoForDateEntity(
     @SerializedName("numberOfItems")
     val numOfItems: Int,
     @SerializedName("customers")
-    val customers: List<Customer>
+    val customers: List<Customer>,
+    @SerializedName("scheduledFor")
+    val scheduledFor: String
 ) : BaseOrderEntity() {
     val name: String
         get() = customers.first().name
@@ -28,7 +30,7 @@ data class TakeoutOrderInfoForDateEntity(
         get() = customers.first().isCA
 
     override fun mapToModel(): TakeoutOrderInfoForDateModel =
-        TakeoutOrderInfoForDateModel(pickupTime, orderType.mapToModel(), numOfItems, customers).apply {
+        TakeoutOrderInfoForDateModel(pickupTime, orderType.mapToModel(), numOfItems, customers, scheduledFor).apply {
             this.orderId = this@TakeoutOrderInfoForDateEntity.orderId
             this.shortId = this@TakeoutOrderInfoForDateEntity.shortId
         }
@@ -46,9 +48,11 @@ data class PaymentInfoEntity(
 
 data class KitchenInfoEntity(
     @SerializedName("status")
-    val orderStatus: OrderStatusDTO
+    val orderStatus: OrderStatusDTO,
+    @SerializedName("preparationTime")
+    val preparationTimeSec: Int
 ) : BaseOrderEntity() {
-    override fun mapToModel(): KitchenInfoModel = KitchenInfoModel(orderStatus.mapToModel()).apply {
+    override fun mapToModel(): KitchenInfoModel = KitchenInfoModel(orderStatus.mapToModel(), preparationTimeSec).apply {
         this.orderId = this@KitchenInfoEntity.orderId
     }
 }

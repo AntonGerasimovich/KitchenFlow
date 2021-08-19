@@ -2,6 +2,7 @@ package com.example.kitchenflow.ui.main
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,25 +13,31 @@ import com.example.kitchenflow.R
 import com.example.kitchenflow.data.entity.OrderModel
 import com.example.kitchenflow.data.entity.OrderStatus
 import com.example.kitchenflow.data.entity.OrderType
+import com.example.kitchenflow.data.entity.SortType
 import com.example.kitchenflow.databinding.ItemOrderBinding
+import java.util.concurrent.TimeUnit
 
 class OrdersAdapter(
     private val context: Context,
     private var orders: List<OrderModel> = mutableListOf()
-) :
-    RecyclerView.Adapter<OrdersAdapter.OrdersViewHolder>() {
+) : RecyclerView.Adapter<OrdersAdapter.OrdersViewHolder>() {
+
+    companion object {
+        private const val KITCHEN_PREP_MILLIS: Long = 15 * 1000 * 60
+        private const val MIN_DRIVE_TIME_MILLIS: Long = 30 * 1000 * 60
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrdersViewHolder {
         val binding = ItemOrderBinding.inflate(LayoutInflater.from(parent.context), parent, false)
         return OrdersViewHolder(binding)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: OrdersViewHolder, position: Int) {
         with(holder.binding) {
             val order = orders[position]
             this.order = order
             setUpMenu(order)
-
             orderTypeIv.setImageDrawable(
                 AppCompatResources.getDrawable(
                     context,
@@ -41,7 +48,7 @@ class OrdersAdapter(
                     }
                 )
             )
-
+            setUpTimer(order)
             if (order.isCA) {
                 labelIv.visibility = View.VISIBLE
                 orderTypeTv.visibility = View.GONE
@@ -51,6 +58,61 @@ class OrdersAdapter(
                 orderTypeTv.text = order.orderType.name
             }
         }
+    }
+
+    private fun ItemOrderBinding.setUpTimer(order: OrderModel) {
+        fun calculateEstimateTime() {
+            val currentTime = System.currentTimeMillis()
+            var orderPrepTime =
+                order.scheduledFor - TimeUnit.SECONDS.toMillis(order.preparationTimeSec.toLong()) + KITCHEN_PREP_MILLIS
+
+            if (order.orderType == OrderType.Curbside || order.orderType == OrderType.Takeout) {
+                showEstimateTime(currentTime, orderPrepTime, order)
+            } else {
+                orderPrepTime -= MIN_DRIVE_TIME_MILLIS
+                showEstimateTime(currentTime, orderPrepTime, order)
+            }
+        }
+
+        calculateEstimateTime()
+        object : CountDownTimer(TimeUnit.MINUTES.toMillis(1), TimeUnit.MINUTES.toMillis(1)) {
+            override fun onTick(millisUntilFinished: Long) {
+            }
+
+            override fun onFinish() {
+                calculateEstimateTime()
+                setUpTimer(order)
+            }
+        }.start()
+    }
+
+    private fun ItemOrderBinding.showEstimateTime(
+        currentTime: Long,
+        orderPrepTime: Long,
+        order: OrderModel
+    ) {
+        ioTimerTv.text = context.getString(
+            R.string.time_minutes, if (currentTime >= orderPrepTime) {
+                ioTimerTv.setTextColor(context.getColor(R.color.colorPrimaryRed))
+                order.timer = ((currentTime - orderPrepTime) / 1000 / 60).toInt()
+                "+${if (order.timer >= 99) 99 else order.timer}m"
+            } else {
+                TimeUnit.MILLISECONDS.toMinutes(orderPrepTime - currentTime).toString()
+            }
+        )
+    }
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun sort(sortType: SortType) {
+        orders = when (sortType) {
+            SortType.PREPARATION -> {
+                orders.sortedBy { it.preparationTimeSec }
+            }
+            SortType.PICKUP -> {
+                orders.sortedBy { it.scheduledFor }
+            }
+        }
+        notifyDataSetChanged()
     }
 
     private fun ItemOrderBinding.setUpMenu(order: OrderModel) {
