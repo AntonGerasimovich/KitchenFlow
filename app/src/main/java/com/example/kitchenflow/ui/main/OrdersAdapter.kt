@@ -2,6 +2,7 @@ package com.example.kitchenflow.ui.main
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.os.CountDownTimer
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,7 +10,10 @@ import android.widget.PopupMenu
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kitchenflow.R
-import com.example.kitchenflow.data.entity.*
+import com.example.kitchenflow.data.entity.OrderModel
+import com.example.kitchenflow.data.entity.OrderStatus
+import com.example.kitchenflow.data.entity.OrderType
+import com.example.kitchenflow.data.entity.SortType
 import com.example.kitchenflow.databinding.ItemOrderBinding
 import java.util.concurrent.TimeUnit
 
@@ -57,18 +61,32 @@ class OrdersAdapter(
     }
 
     private fun ItemOrderBinding.setUpTimer(order: OrderModel) {
-        val currentTime = System.currentTimeMillis()
-        var orderPrepTime =
-            order.scheduledFor - TimeUnit.SECONDS.toMillis(order.preparationTimeSec.toLong()) + KITCHEN_PREP_MILLIS
-        if (order.orderType == OrderType.Curbside || order.orderType == OrderType.Takeout) {
-            calculateTime(currentTime, orderPrepTime, order)
-        } else {
-            orderPrepTime -= MIN_DRIVE_TIME_MILLIS
-            calculateTime(currentTime, orderPrepTime, order)
+        fun calculateEstimateTime() {
+            val currentTime = System.currentTimeMillis()
+            var orderPrepTime =
+                order.scheduledFor - TimeUnit.SECONDS.toMillis(order.preparationTimeSec.toLong()) + KITCHEN_PREP_MILLIS
+
+            if (order.orderType == OrderType.Curbside || order.orderType == OrderType.Takeout) {
+                showEstimateTime(currentTime, orderPrepTime, order)
+            } else {
+                orderPrepTime -= MIN_DRIVE_TIME_MILLIS
+                showEstimateTime(currentTime, orderPrepTime, order)
+            }
         }
+
+        calculateEstimateTime()
+        object : CountDownTimer(TimeUnit.MINUTES.toMillis(1), TimeUnit.MINUTES.toMillis(1)) {
+            override fun onTick(millisUntilFinished: Long) {
+            }
+
+            override fun onFinish() {
+                calculateEstimateTime()
+                setUpTimer(order)
+            }
+        }.start()
     }
 
-    private fun ItemOrderBinding.calculateTime(
+    private fun ItemOrderBinding.showEstimateTime(
         currentTime: Long,
         orderPrepTime: Long,
         order: OrderModel

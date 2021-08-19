@@ -113,7 +113,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:text="@{`Current orders(` + model.currentOrders + `)`}"
+            android:text="@{@string/current_orders(model.currentOrders)}"
             android:textAllCaps="true"
             android:textColor="@color/colorSkyBlue"
             app:layout_constraintBottom_toBottomOf="@+id/previous_tv"

@@ -16,10 +16,13 @@ class MainViewModel(private val repository: KitchenRepository) : ViewModel() {
     private val ordersData: MutableLiveData<List<OrderModel>> = MutableLiveData()
     val orders: LiveData<List<OrderModel>> = ordersData
     val date: ObservableField<String> = ObservableField(
-        SimpleDateFormat("EEE, MMMM dd", Locale.ENGLISH).format(
-            Calendar.getInstance().time
-        )
+        getCurrentDate()
     )
+
+    private fun getCurrentDate() = SimpleDateFormat("EEE, MMMM dd", Locale.ENGLISH).format(
+        Calendar.getInstance().time
+    )
+
     val currentOrders: ObservableField<String> = ObservableField("0")
 
     init {

@@ -3,7 +3,7 @@
     <string name="search_hint">Search using Order Number, Phone Number and Customer Number</string>
     <string name="previous_orders">Previous orders</string>
     <string name="upcoming_orders">Upcoming Orders</string>
-    <string name="current_orders">Current Orders</string>
+    <string name="current_orders">Current Orders(%s)</string>
     <string name="payment">Payment: %s</string>
     <string name="order">Order #%s</string>
     <string name="num_of_items">Number of items: %s</string>
