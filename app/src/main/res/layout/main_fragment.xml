@@ -74,7 +74,7 @@
             android:drawablePadding="16dp"
             android:textColor="@color/colorSkyBlue"
             android:textSize="38sp"
-            android:text="@{model.date}"
+            android:text="@{model.dateAndTime}"
             app:drawableStartCompat="@drawable/ic_icon_calendar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -88,6 +88,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="32dp"
             android:layout_marginTop="32dp"
+            android:onClick="@{model::previousDay}"
             android:text="@string/previous_orders"
             android:textAllCaps="true"
             app:drawableStartCompat="@drawable/ic_previous_arrow"
@@ -101,6 +102,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
             android:layout_marginEnd="32dp"
+            android:onClick="@{model::nextDay}"
             android:text="@string/upcoming_orders"
             android:textAllCaps="true"
             app:drawableEndCompat="@drawable/ic_next_arrow"
@@ -133,6 +135,17 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/current_tv"
             tools:listitem="@layout/item_order" />
+
+        <include
+            android:id="@+id/no_orders"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/previous_tv"
+            android:layout_marginTop="32dp"
+            tools:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            layout="@layout/no_orders" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

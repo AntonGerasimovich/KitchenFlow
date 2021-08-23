@@ -1,6 +1,7 @@
 package com.example.kitchenflow.data.entity
 
 import com.google.gson.annotations.SerializedName
+import java.util.*
 
 abstract class BaseOrderEntity {
     @SerializedName("orderId")
@@ -22,7 +23,7 @@ data class TakeoutOrderInfoForDateEntity(
     @SerializedName("customers")
     val customers: List<Customer>,
     @SerializedName("scheduledFor")
-    val scheduledFor: String
+    val scheduledFor: Date
 ) : BaseOrderEntity() {
     val name: String
         get() = customers.first().name
