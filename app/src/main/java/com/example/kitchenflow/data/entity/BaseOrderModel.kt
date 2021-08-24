@@ -1,5 +1,7 @@
 package com.example.kitchenflow.data.entity
 
+import java.util.*
+
 abstract class BaseOrderModel {
     var orderId: String = ""
     var shortId: String = ""
@@ -10,7 +12,7 @@ data class TakeoutOrderInfoForDateModel(
     val orderType: OrderType,
     val numOfItems: Int,
     val customers: List<Customer>,
-    val scheduledFor: String
+    val scheduledFor: Date
 ) : BaseOrderModel() {
     val name: String
         get() = customers.first().name

@@ -23,4 +23,6 @@
     <string name="sort_by_preparation_start">Sort by Preparation Start Time</string>
     <string name="sort_by_pick_up_time">Sort by Pick up Time</string>
     <string name="time_minutes">%sm</string>
+    <string name="no_orders_yet">No orders yet :(</string>
+    <string name="restaurant_closed">Restaurant is closed :(</string>
 </resources>

@@ -15,7 +15,9 @@ import com.example.kitchenflow.data.entity.OrderStatus
 import com.example.kitchenflow.data.entity.OrderType
 import com.example.kitchenflow.data.entity.SortType
 import com.example.kitchenflow.databinding.ItemOrderBinding
+import java.time.Instant
 import java.util.concurrent.TimeUnit
+import kotlin.time.ExperimentalTime
 
 class OrdersAdapter(
     private val context: Context,
@@ -32,6 +34,7 @@ class OrdersAdapter(
         return OrdersViewHolder(binding)
     }
 
+    @ExperimentalTime
     @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: OrdersViewHolder, position: Int) {
         with(holder.binding) {
@@ -60,16 +63,19 @@ class OrdersAdapter(
         }
     }
 
+    @ExperimentalTime
     private fun ItemOrderBinding.setUpTimer(order: OrderModel) {
         fun calculateEstimateTime() {
-            val currentTime = System.currentTimeMillis()
+            val currentTime = Instant.ofEpochMilli(System.currentTimeMillis())
             var orderPrepTime =
-                order.scheduledFor - TimeUnit.SECONDS.toMillis(order.preparationTimeSec.toLong()) + KITCHEN_PREP_MILLIS
+                Instant.ofEpochMilli(order.scheduledFor.time - order.preparationTimeSec.toLong() + KITCHEN_PREP_MILLIS)
 
             if (order.orderType == OrderType.Curbside || order.orderType == OrderType.Takeout) {
                 showEstimateTime(currentTime, orderPrepTime, order)
             } else {
-                orderPrepTime -= MIN_DRIVE_TIME_MILLIS
+                orderPrepTime = orderPrepTime.minusMillis(
+                    Instant.ofEpochMilli(MIN_DRIVE_TIME_MILLIS).toEpochMilli()
+                )
                 showEstimateTime(currentTime, orderPrepTime, order)
             }
         }
@@ -86,18 +92,23 @@ class OrdersAdapter(
         }.start()
     }
 
+    @ExperimentalTime
     private fun ItemOrderBinding.showEstimateTime(
-        currentTime: Long,
-        orderPrepTime: Long,
+        currentTime: Instant,
+        orderPrepTime: Instant,
         order: OrderModel
     ) {
         ioTimerTv.text = context.getString(
             R.string.time_minutes, if (currentTime >= orderPrepTime) {
                 ioTimerTv.setTextColor(context.getColor(R.color.colorPrimaryRed))
-                order.timer = ((currentTime - orderPrepTime) / 1000 / 60).toInt()
+                order.timer = TimeUnit.MILLISECONDS.toMinutes(
+                    (currentTime.minusMillis(orderPrepTime.toEpochMilli())).toEpochMilli()
+                ).toInt()
                 "+${if (order.timer >= 99) 99 else order.timer}m"
             } else {
-                TimeUnit.MILLISECONDS.toMinutes(orderPrepTime - currentTime).toString()
+                TimeUnit.MILLISECONDS.toMinutes(
+                    (orderPrepTime.minusMillis(currentTime.toEpochMilli()).toEpochMilli())
+                ).toString()
             }
         )
     }

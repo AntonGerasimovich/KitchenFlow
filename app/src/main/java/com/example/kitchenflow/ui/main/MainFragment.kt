@@ -1,7 +1,7 @@
 package com.example.kitchenflow.ui.main
 
 import android.annotation.SuppressLint
-import android.icu.util.Calendar
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -17,7 +17,6 @@ import com.example.kitchenflow.data.entity.SortType
 import com.example.kitchenflow.data.entity.getSortTypeString
 import com.example.kitchenflow.databinding.MainFragmentBinding
 import org.koin.android.ext.android.inject
-import java.text.SimpleDateFormat
 import java.util.*
 
 class MainFragment : Fragment() {
@@ -44,7 +43,30 @@ class MainFragment : Fragment() {
         initView()
         viewModel.orders.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmpty()) {
-                adapter.addAll(it)
+                adapter.addAll(it.filter { orderModel ->
+                    val scheduled = "${orderModel.scheduledFor.month}${orderModel.scheduledFor.date}"
+                    val current = "${viewModel.date.value?.month}${viewModel.date.value?.date}"
+                    scheduled == current
+                })
+                viewModel.currentOrders.set(adapter.itemCount.toString())
+                setErrorVisibility(adapter.itemCount == 0)
+            }
+        }
+    }
+
+    private fun setErrorVisibility(visible: Boolean) {
+        with(binding.noOrders) {
+            if (visible) {
+                imageView.visibility = View.VISIBLE
+                title.visibility = View.VISIBLE
+                title.text = if (viewModel.isRestaurantOpen()) {
+                    requireContext().getString(R.string.no_orders_yet)
+                } else {
+                    requireContext().getString(R.string.restaurant_closed)
+                }
+            } else {
+                imageView.visibility = View.GONE
+                title.visibility = View.GONE
             }
         }
     }
@@ -94,12 +116,36 @@ class MainFragment : Fragment() {
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     val filter = s.toString()
                     if (filter.isNotEmpty()) {
-                        viewModel.sortItems(s.toString())?.let { adapter.addAll(it) }
+                        viewModel.sortItems(s.toString())?.let {
+                            adapter.addAll(it.filter { orderModel ->
+                                val scheduled = "${orderModel.scheduledFor.month}${orderModel.scheduledFor.date}"
+                                val current = "${viewModel.date.value?.month}${viewModel.date.value?.date}"
+                                scheduled == current
+                            })
+                        }
                     } else viewModel.orders.value?.let { adapter.addAll(it) }
+                    viewModel.currentOrders.set(adapter.itemCount.toString())
+                    setErrorVisibility(adapter.itemCount == 0)
                 }
 
                 override fun afterTextChanged(s: Editable?) {}
             })
+            dateTv.setOnClickListener {
+                val modelYear = model?.date?.value?.year
+                val modelMonth = model?.date?.value?.month
+                val modelDay = model?.date?.value?.date
+                if (modelYear != null && modelMonth != null && modelDay != null) {
+                    DatePickerDialog(
+                        requireContext(),
+                        { _, year, month, dayOfMonth ->
+                            model?.updateDate(Date(year, month, dayOfMonth))
+                        },
+                        modelYear,
+                        modelMonth,
+                        modelDay
+                    ).show()
+                }
+            }
         }
     }
 }
