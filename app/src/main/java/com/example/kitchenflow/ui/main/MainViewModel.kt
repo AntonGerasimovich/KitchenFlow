@@ -69,12 +69,16 @@ class MainViewModel(private val repository: KitchenRepository) : ViewModel() {
                 SimpleDateFormat("EEEE").format(calendar.time).uppercase()
             )
         }
-        return if (annualClosure != null && annualClosure.closedAllDay) {
-            false
-        } else if (date.value?.time in scheduledClosuresFrom.time..scheduledClosuresTo.time) {
-            true
-        } else {
-            openDay != null
+        return when {
+            annualClosure != null && annualClosure.closedAllDay -> {
+                false
+            }
+            date.value?.time in scheduledClosuresFrom.time..scheduledClosuresTo.time -> {
+                true
+            }
+            else -> {
+                openDay != null
+            }
         }
     }
 
@@ -91,24 +95,15 @@ class MainViewModel(private val repository: KitchenRepository) : ViewModel() {
         return orders.value?.filter { sortString in it.username || sortString in it.shortId }
     }
 
-    fun nextDay(view: View) {
-        date.value?.time?.plus(TimeUnit.DAYS.toMillis(1))?.let { date.value?.time = it }
-        dateAndTime.set(
-            SimpleDateFormat("EEE, MMMM dd", Locale.ENGLISH).format(
-                date.value?.time
-            )
-        )
-        fetchOrders()
-    }
-
-    fun previousDay(view: View) {
-        date.value?.time?.minus(TimeUnit.DAYS.toMillis(1))?.let { date.value?.time = it }
-        dateAndTime.set(
-            SimpleDateFormat("EEE, MMMM dd", Locale.ENGLISH).format(
-                date.value?.time
-            )
-        )
-        fetchOrders()
+    fun changeDay(toTheFuture: Boolean) {
+        val date = if (toTheFuture) {
+            date.value?.time?.plus(TimeUnit.DAYS.toMillis(1))?.let { Date(it) }
+        } else {
+            date.value?.time?.minus(TimeUnit.DAYS.toMillis(1))?.let { Date(it) }
+        }
+        if (date != null) {
+            updateDate(date)
+        }
     }
 
     fun updateDate(date: Date) {

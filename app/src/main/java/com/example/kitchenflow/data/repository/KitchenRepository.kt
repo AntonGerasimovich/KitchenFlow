@@ -27,18 +27,43 @@ class KitchenRepository {
 
     private var holidayZipper: (String, String, String) -> VenueOpeningHours =
         object : Function3<String, String, String, VenueOpeningHours> {
-            override fun invoke(p1: String, p2: String, p3: String): VenueOpeningHours {
+            override fun invoke(
+                venueOpeningHoursStr: String,
+                holidaysStr: String,
+                p3: String
+            ): VenueOpeningHours {
                 val gson = GsonBuilder()
                     .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
                     .create()
                 val venueOpeningHours: VenueOpeningHours =
-                    gson.fromJson(p1, object : TypeToken<VenueOpeningHours>() {}.type)
+                    gson.fromJson(
+                        venueOpeningHoursStr,
+                        object : TypeToken<VenueOpeningHours>() {}.type
+                    )
                 val holidays: List<HolidaysItem> =
-                    gson.fromJson(p2, object : TypeToken<List<HolidaysItem>>() {}.type)
+                    gson.fromJson(holidaysStr, object : TypeToken<List<HolidaysItem>>() {}.type)
                 venueOpeningHours.annualClosures.forEach { annualClosure ->
                     val holiday = holidays.find { holiday -> annualClosure.holidayId == holiday.id }
                     holiday?.let {
-                        annualClosure.date = "${it.month}/${it.day}"
+                        if (it.dayOfWeek.isNullOrEmpty()) {
+                            annualClosure.date = "${it.month}/${it.day}"
+                        } else {
+                            val calendar = Calendar.getInstance()
+                            calendar.set(
+                                Calendar.DAY_OF_WEEK,
+                                it.dayOfWeek.getDayOfWeekByName().num
+                            )
+                            it.dayOfWeekCount?.getDayOfWeekCountByName()?.let { it1 ->
+                                calendar.set(
+                                    Calendar.DAY_OF_WEEK_IN_MONTH,
+                                    it1.num
+                                )
+                            }
+                            calendar.set(Calendar.MONTH, it.month.getMonthNumFromName().num)
+                            calendar.set(Calendar.YEAR, Date().year)
+                            val day = calendar.get(Calendar.DATE)
+                            annualClosure.date = "${it.month}/${day}"
+                        }
                     }
                 }
                 return venueOpeningHours
@@ -110,7 +135,7 @@ class KitchenRepository {
                     }
                 }
             }
-            val group = kitchenOrderStatuses.groupBy { }
+            val group = kitchenOrderStatuses.groupBy { it1 -> it1.name }
             orderStatus =
                 if (group.keys.size == 1) kitchenOrderStatuses.first() else OrderStatus.InProgress
             orders.add(
@@ -135,6 +160,77 @@ class KitchenRepository {
         val day = Calendar.getInstance().time.date
         val month = Calendar.getInstance().time.month
         return Date(this.year, month, day, this.hours, this.minutes)
+    }
+
+    enum class DaysOfWeek(val num: Int) {
+        MONDAY(2),
+        TUESDAY(3),
+        WEDNESDAY(4),
+        THURSDAY(5),
+        FRIDAY(6),
+        SATURDAY(7),
+        SUNDAY(1);
+    }
+
+    fun String.getDayOfWeekByName(): DaysOfWeek {
+        return when (this) {
+            "MONDAY" -> DaysOfWeek.MONDAY
+            "TUESDAY" -> DaysOfWeek.TUESDAY
+            "WEDNESDAY" -> DaysOfWeek.WEDNESDAY
+            "THURSDAY" -> DaysOfWeek.THURSDAY
+            "FRIDAY" -> DaysOfWeek.FRIDAY
+            "SATURDAY" -> DaysOfWeek.SATURDAY
+            "SUNDAY" -> DaysOfWeek.SUNDAY
+            else -> DaysOfWeek.MONDAY
+        }
+    }
+
+    enum class DayOfWeekCount(val num: Int) {
+        FIRST(1),
+        SECOND(2),
+        THIRD(3),
+        FOURTH(4),
+        LAST(5)
+    }
+
+    fun String.getDayOfWeekCountByName(): DayOfWeekCount = when (this) {
+        "First" -> DayOfWeekCount.FIRST
+        "Second" -> DayOfWeekCount.SECOND
+        "Third" -> DayOfWeekCount.THIRD
+        "Fourth" -> DayOfWeekCount.FOURTH
+        "Last" -> DayOfWeekCount.LAST
+        else -> DayOfWeekCount.FIRST
+    }
+
+    enum class Months(val num: Int) {
+        JANUARY(1),
+        FEBRUARY(2),
+        MARCH(3),
+        APRIL(4),
+        MAY(5),
+        JUNE(6),
+        JULY(7),
+        AUGUST(8),
+        SEPTEMBER(9),
+        OCTOBER(10),
+        NOVEMBER(11),
+        DECEMBER(12)
+    }
+
+    fun String.getMonthNumFromName(): Months = when (this) {
+        "January" -> Months.JANUARY
+        "February" -> Months.FEBRUARY
+        "MARCH" -> Months.MARCH
+        "APRIL" -> Months.APRIL
+        "MAY" -> Months.MAY
+        "JUNE" -> Months.JUNE
+        "JULY" -> Months.JULY
+        "AUGUST" -> Months.AUGUST
+        "SEPTEMBER" -> Months.SEPTEMBER
+        "OCTOBER" -> Months.OCTOBER
+        "NOVEMBER" -> Months.NOVEMBER
+        "DECEMBER" -> Months.DECEMBER
+        else -> Months.JANUARY
     }
 }
 

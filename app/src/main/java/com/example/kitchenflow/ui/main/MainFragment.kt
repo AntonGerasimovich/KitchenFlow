@@ -44,7 +44,9 @@ class MainFragment : Fragment() {
         viewModel.orders.observe(viewLifecycleOwner) {
             if (!it.isNullOrEmpty()) {
                 adapter.addAll(it.filter { orderModel ->
-                    orderModel.scheduledFor.date == viewModel.date.value?.date
+                    val scheduled = "${orderModel.scheduledFor.month}${orderModel.scheduledFor.date}"
+                    val current = "${viewModel.date.value?.month}${viewModel.date.value?.date}"
+                    scheduled == current
                 })
                 viewModel.currentOrders.set(adapter.itemCount.toString())
                 setErrorVisibility(adapter.itemCount == 0)
@@ -116,7 +118,9 @@ class MainFragment : Fragment() {
                     if (filter.isNotEmpty()) {
                         viewModel.sortItems(s.toString())?.let {
                             adapter.addAll(it.filter { orderModel ->
-                                orderModel.scheduledFor.date == viewModel.date.value?.date
+                                val scheduled = "${orderModel.scheduledFor.month}${orderModel.scheduledFor.date}"
+                                val current = "${viewModel.date.value?.month}${viewModel.date.value?.date}"
+                                scheduled == current
                             })
                         }
                     } else viewModel.orders.value?.let { adapter.addAll(it) }
